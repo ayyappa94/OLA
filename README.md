@@ -94,3 +94,88 @@ MsgBox "Schedule Cancelled"
 
 End Sub
 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Sub ConnectingToOutlook()
+Dim out As Outlook.Application
+Set out = New Outlook.Application
+
+Dim mit As Outlook.MailItem
+Set mit = out.CreateItem(olMailItem)
+
+
+mit.To = "Suryanalajala@gmail.com"
+mit.CC = "Surya.analyst13@gmail.com"
+mit.BCC = "surya.nalajala@outlook.com"
+
+mit.Subject = "Regarding Testing Outlook Macro"
+mit.Body = "Hello Surya," & vbNewLine & "we are testing a outlook macro.Please dont repond to this mail." & vbNewLine & "Thanks," & vbNewLine & "XYZ"
+mit.Attachments.Add "C:\Users\mpkum\Desktop\Simha.xlsx"
+
+mit.Display
+mit.Send
+
+End Sub
+
+Sub SendingBulkEmails()
+
+Dim out As Outlook.Application
+Set out = New Outlook.Application
+
+Dim mit As Outlook.MailItem
+
+
+Dim lr As Integer
+lr = Range("A" & Rows.Count).End(xlUp).Row
+
+For i = 2 To lr
+
+    Set mit = out.CreateItem(olMailItem)
+
+    mit.To = Range("B" & i).Value
+    mit.CC = Range("C" & i).Value
+    mit.BCC = Range("D" & i).Value
+
+   mit.Subject = "Regarding Testing Outlook Macro"
+   mit.Body = "Hello " & Range("A" & i).Value & "," & vbNewLine & "we are testing a outlook macro.Please dont repond to this mail." & vbNewLine & "Thanks," & vbNewLine & "XYZ"
+   mit.Attachments.Add "C:\Users\mpkum\Desktop\Simha.xlsx"
+
+   mit.Display
+   mit.Send
+
+Next i
+
+End Sub
+
+
+Sub ConnectingToSqlServer()              
+Dim Con As ADODB.Connection
+Set Con = New ADODB.Connection
+
+Dim Rs As ADODB.Recordset
+Set Rs = New ADODB.Recordset
+
+Dim Fd As ADODB.Field
+
+Con.ConnectionString = "Provider=SQLOLEDB.1;Integrated Security=SSPI;Persist Security Info=True;Initial Catalog=AdventureWorks2012;Data Source=DESKTOP-AEF2VP2;"
+
+Con.Open
+       
+       Rs.ActiveConnection = Con
+       Rs.LockType = adLockReadOnly
+       Rs.CursorType = adOpenDynamic
+       'Rs.Source = "Employees"
+       Rs.Source = "Select * from Employees where Salary >=50000"
+       Rs.Open
+       Range("A2").CopyFromRecordset Rs
+       i = 1
+       For Each Fd In Rs.Fields
+       
+        Cells(1, i).Value = Fd.Name
+       i = i + 1
+       Next Fd
+       
+       Rs.Close
+Con.Close
+
+End Sub
